@@ -46,38 +46,38 @@ export function WristbandDashboard({ onSelectDate }: WristbandDashboardProps) {
   };
 
   const statusStyle: Record<WristbandSession["status"], string> = {
-    open: "bg-green-100 text-green-700",
-    closed: "bg-gray-100 text-gray-600",
-    unknown: "bg-amber-100 text-amber-700",
+    open: "bg-success/15 text-success",
+    closed: "bg-muted text-muted-foreground",
+    unknown: "bg-warning/15 text-warning",
   };
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">운영 날짜 선택</h2>
-        <p className="text-sm text-gray-500">배부 운영일을 선택해 상세 화면으로 이동합니다.</p>
+        <h2 className="text-2xl font-semibold text-foreground mb-2">운영 날짜 선택</h2>
+        <p className="text-sm text-muted-foreground">배부 운영일을 선택해 상세 화면으로 이동합니다.</p>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
           세션 정보를 불러오지 못했습니다. 서버 상태를 확인해주세요.
         </div>
       )}
 
       {loading && sessions.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white px-4 py-6 text-sm text-gray-500">
+        <div className="rounded-lg border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
           세션 목록을 불러오는 중입니다...
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {sortedSessions.map((session) => (
-            <Card key={session.id} className="p-8 hover:shadow-lg transition-shadow">
+            <Card key={session.id} className="p-8 hover:shadow-md transition-shadow">
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-gray-900">
+                  <h3 className="text-2xl font-bold text-foreground">
                     {formatDate(session.date)} 공연 팔찌 배부
                   </h3>
-                  <div className="flex items-center gap-2 text-base text-gray-600">
+                  <div className="flex items-center gap-2 text-base text-muted-foreground">
                     <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusStyle[session.status]}`}>
                       {statusLabel[session.status]}
                     </span>
@@ -85,7 +85,7 @@ export function WristbandDashboard({ onSelectDate }: WristbandDashboardProps) {
                   </div>
                 </div>
                 <Button
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-base"
+                  className="w-full h-12 text-base"
                   onClick={() => onSelectDate(session.date)}
                 >
                   관리하기
@@ -95,7 +95,7 @@ export function WristbandDashboard({ onSelectDate }: WristbandDashboardProps) {
           ))}
 
           {!sortedSessions.length && (
-            <Card className="p-8 text-center text-sm text-gray-500">
+            <Card className="p-8 text-center text-sm text-muted-foreground">
               등록된 운영 세션이 없습니다.
             </Card>
           )}

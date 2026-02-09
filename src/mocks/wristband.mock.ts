@@ -17,11 +17,6 @@ const sessions: WristbandSession[] = [
     date: "2026-05-14",
     status: "open",
   },
-  {
-    id: "session-2026-05-15",
-    date: "2026-05-15",
-    status: "closed",
-  },
 ];
 
 const attendees: MockAttendeeRecord[] = [
@@ -29,7 +24,7 @@ const attendees: MockAttendeeRecord[] = [
     studentId: "20240001",
     ticketId: "T-2026-0513-0001",
     queueNumber: 12,
-    name: "김주희",
+    name: "박주희",
     college: "공과대학",
     department: "컴퓨터공학과",
     hasWristband: false,
@@ -74,16 +69,6 @@ const attendees: MockAttendeeRecord[] = [
     department: "물리학과",
     hasWristband: true,
     ticketDate: "2026-05-14",
-  },
-  {
-    studentId: "20221212",
-    ticketId: "T-2026-0515-0004",
-    queueNumber: 4,
-    name: "최하늘",
-    college: "예술대학",
-    department: "디자인학과",
-    hasWristband: true,
-    ticketDate: "2026-05-15",
   },
 ];
 

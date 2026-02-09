@@ -144,26 +144,26 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
           날짜 선택으로 돌아가기
         </Button>
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">
+          <h2 className="text-2xl font-semibold text-foreground">
             {formatDate(date)} 공연 팔찌 지급 시스템
           </h2>
-          <p className="text-sm text-gray-500">운영자: 관리자</p>
+          <p className="text-sm text-muted-foreground">운영자: 관리자</p>
         </div>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
           요청에 실패했습니다. 서버 상태 또는 토큰 설정을 확인해주세요.
         </div>
       )}
 
       <div className="space-y-6">
         <div className="grid grid-cols-3 gap-3">
-          <Card className="p-3 bg-blue-50 border border-blue-200">
+          <Card className="p-3 bg-primary-soft border border-primary/20">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-blue-700 font-semibold mb-0.5">전체 티켓</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xs text-primary font-semibold mb-0.5">전체 티켓</p>
+                <p className="text-2xl font-bold text-foreground">
                   {statsLoading ? "-" : resolvedStats.totalTickets}
                 </p>
               </div>
@@ -171,14 +171,14 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
             </div>
           </Card>
 
-          <Card className="p-3 bg-green-50 border border-green-200">
+          <Card className="p-3 bg-success/10 border border-success/20">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-green-700 font-semibold mb-0.5">지급 완료</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xs text-success font-semibold mb-0.5">지급 완료</p>
+                <p className="text-2xl font-bold text-foreground">
                   {statsLoading ? "-" : resolvedStats.issuedCount}
                   {!statsLoading && resolvedStats.totalTickets > 0 && (
-                    <span className="text-sm text-green-600 ml-1.5">
+                    <span className="text-sm text-success ml-1.5">
                       ({((resolvedStats.issuedCount / resolvedStats.totalTickets) * 100).toFixed(1)}%)
                     </span>
                   )}
@@ -188,14 +188,14 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
             </div>
           </Card>
 
-          <Card className="p-3 bg-amber-50 border border-amber-200">
+          <Card className="p-3 bg-[#fef0f6] border border-[#fcd6e4]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-amber-700 font-semibold mb-0.5">미지급</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xs text-[#d46995] font-semibold mb-0.5">미지급</p>
+                <p className="text-2xl font-bold text-foreground">
                   {statsLoading ? "-" : resolvedStats.pendingCount}
                   {!statsLoading && resolvedStats.totalTickets > 0 && (
-                    <span className="text-sm text-amber-600 ml-1.5">
+                    <span className="text-sm text-[#d46995] ml-1.5">
                       ({((resolvedStats.pendingCount / resolvedStats.totalTickets) * 100).toFixed(1)}%)
                     </span>
                   )}
@@ -206,19 +206,19 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
           </Card>
         </div>
 
-        <Card className="p-8">
-          <div className="space-y-5">
-            <Label className="text-lg font-medium">학생 티켓 학번/티켓ID로 조회</Label>
+        <Card className="p-6">
+          <div className="space-y-4">
+            <Label className="text-base font-medium text-foreground">학생 티켓 학번/티켓ID로 조회</Label>
             <div className="flex gap-4">
               <Input
                 placeholder="학번 또는 티켓ID 입력"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="flex-1 h-14 text-lg"
+                className="flex-1 h-12 text-base"
               />
               <Button
-                className="bg-blue-600 hover:bg-blue-700 px-12 h-14 text-lg"
+                className="px-12 h-12 text-base"
                 onClick={handleSearch}
                 disabled={searching}
               >
@@ -229,34 +229,34 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
         </Card>
 
         {hasSearched && searchResults.length === 0 && (
-          <Card className="p-6 text-sm text-gray-500">조회 결과가 없습니다.</Card>
+          <Card className="p-6 text-sm text-muted-foreground">조회 결과가 없습니다.</Card>
         )}
 
         {searchResults.length > 0 && (
-          <Card className="p-6">
-            <h3 className="font-semibold text-lg mb-4">조회 결과</h3>
+          <Card className="p-4">
+            <h3 className="font-semibold text-base mb-3">조회 결과</h3>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-base">학번</TableHead>
-                  <TableHead className="text-base">티켓ID / 순번</TableHead>
-                  <TableHead className="text-base">이름</TableHead>
-                  <TableHead className="text-base">단과대학</TableHead>
-                  <TableHead className="text-base">학과</TableHead>
-                  <TableHead className="text-base">팔찌 지급 여부 (상태)</TableHead>
-                  <TableHead className="text-base">지급 버튼</TableHead>
+                  <TableHead className="text-sm">학번</TableHead>
+                  <TableHead className="text-sm">티켓ID / 순번</TableHead>
+                  <TableHead className="text-sm">이름</TableHead>
+                  <TableHead className="text-sm">단과대학</TableHead>
+                  <TableHead className="text-sm">학과</TableHead>
+                  <TableHead className="text-sm">팔찌 지급 여부 (상태)</TableHead>
+                  <TableHead className="text-sm">지급 버튼</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {searchResults.map((student) => (
                   <TableRow key={`${student.studentId}-${student.ticketId}`}>
-                    <TableCell className="font-medium text-base">{student.studentId}</TableCell>
+                    <TableCell className="font-medium text-sm py-2">{student.studentId}</TableCell>
                     <TableCell className="text-base">
                       <div className="space-y-1">
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className="text-sm font-semibold text-foreground">
                           {student.ticketId || "-"}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                           순번: {student.queueNumber ?? "-"}
                         </div>
                       </div>
@@ -266,22 +266,22 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
                     <TableCell className="text-base">{student.department}</TableCell>
                     <TableCell>
                       {student.hasWristband ? (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-danger/15 text-danger">
                           수령완료
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#fef0f6] text-[#d46995]">
                           미지급
                         </span>
                       )}
                     </TableCell>
                     <TableCell>
                       {student.hasWristband ? (
-                        <span className="text-sm text-gray-400">지급 완료</span>
+                        <span className="text-sm text-muted-foreground">지급 완료</span>
                       ) : (
                         <Button
                           size="default"
-                          className="bg-blue-600 hover:bg-blue-700 h-10 px-6"
+                          className="h-10 px-6"
                           onClick={() => handleIssueWristband(student)}
                           disabled={issuing}
                         >
@@ -296,70 +296,70 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
           </Card>
         )}
 
-        <Card className="p-5 bg-amber-50/60 border-2 border-amber-200/80 shadow-sm rounded-xl">
+        <Card className="p-5 bg-[#fef0f6] border-2 border-[#fcd6e4] shadow-sm rounded-xl">
           <div className="flex gap-2.5">
             <div className="flex-shrink-0">
-              <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
-                <Info className="size-4 text-amber-700" />
+              <div className="w-7 h-7 rounded-lg bg-[#fcd6e4] flex items-center justify-center">
+                <Info className="size-4 text-[#d46995]" />
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-bold text-gray-900 mb-2.5">
+              <h3 className="text-sm font-bold text-foreground mb-2.5">
                 팔찌 지급 절차 안내
               </h3>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-gray-800 text-xs">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-foreground text-xs">
                 <div className="flex gap-1.5 leading-snug">
-                  <span className="flex-shrink-0 font-semibold text-amber-700">1.</span>
+                  <span className="flex-shrink-0 font-semibold text-[#d46995]">1.</span>
                   <span>웹정보-기본정보 화면에서 얼굴 본인 확인</span>
                 </div>
                 <div className="flex gap-1.5 leading-snug">
-                  <span className="flex-shrink-0 font-semibold text-amber-700">2.</span>
+                  <span className="flex-shrink-0 font-semibold text-[#d46995]">2.</span>
                   <span>웹정보-기본정보 화면에서 학번 확인</span>
                 </div>
                 <div className="flex gap-1.5 leading-snug">
-                  <span className="flex-shrink-0 font-semibold text-amber-700">3.</span>
+                  <span className="flex-shrink-0 font-semibold text-[#d46995]">3.</span>
                   <span>
                     학번 조회 후{" "}
-                    <span className="font-semibold text-green-700 bg-green-100 px-1 py-0.5 rounded text-[11px]">
+                    <span className="font-semibold text-[#d46995] bg-[#fcd6e4] px-1 py-0.5 rounded text-[11px]">
                       미지급
                     </span>
                     {" "}여부 확인
                   </span>
                 </div>
                 <div className="flex gap-1.5 leading-snug">
-                  <span className="flex-shrink-0 font-semibold text-amber-700">4.</span>
+                  <span className="flex-shrink-0 font-semibold text-[#d46995]">4.</span>
                   <span>
-                    <span className="font-semibold text-blue-700 bg-blue-100 px-1 py-0.5 rounded text-[11px]">
+                    <span className="font-semibold text-primary bg-primary-soft px-1 py-0.5 rounded text-[11px]">
                       [팔찌 주기]
                     </span>
                     {" "}버튼 클릭
                   </span>
                 </div>
                 <div className="flex gap-1.5 leading-snug">
-                  <span className="flex-shrink-0 font-semibold text-amber-700">5.</span>
+                  <span className="flex-shrink-0 font-semibold text-[#d46995]">5.</span>
                   <span>
                     확인 팝업에서{" "}
-                    <span className="font-semibold text-blue-700 bg-blue-100 px-1 py-0.5 rounded text-[11px]">
+                    <span className="font-semibold text-primary bg-primary-soft px-1 py-0.5 rounded text-[11px]">
                       [지급 확정]
                     </span>
                     {" "}클릭
                   </span>
                 </div>
                 <div className="flex gap-1.5 leading-snug">
-                  <span className="flex-shrink-0 font-semibold text-amber-700">6.</span>
+                  <span className="flex-shrink-0 font-semibold text-[#d46995]">6.</span>
                   <span>
-                    <span className="font-semibold text-red-700 bg-red-100 px-1 py-0.5 rounded text-[11px]">
+                    <span className="font-semibold text-danger bg-danger/10 px-1 py-0.5 rounded text-[11px]">
                       수령완료
                     </span>
                     {" "}확인 후 팔찌 전달
                   </span>
                 </div>
               </div>
-              <div className="mt-2 pt-2 border-t border-amber-200">
-                <p className="text-[11px] text-amber-900 flex items-start gap-1 leading-snug">
-                  <span className="font-semibold text-red-600">⚠</span>
+              <div className="mt-2 pt-2 border-t border-[#fcd6e4]">
+                <p className="text-[11px] text-[#d46995] flex items-start gap-1 leading-snug">
+                  <span className="font-semibold text-danger">⚠</span>
                   <span>
-                    <span className="font-semibold text-red-700">중요:</span> 지급 처리 후 취소 불가능 - 반드시 학생 본인 확인 후 지급
+                    <span className="font-semibold text-danger">중요:</span> 지급 처리 후 취소 불가능 - 반드시 학생 본인 확인 후 지급
                   </span>
                 </p>
               </div>
@@ -380,7 +380,7 @@ export function WristbandOperationScreen({ date, onBack }: WristbandOperationScr
             <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
               취소
             </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={confirmIssue} disabled={issuing}>
+            <Button onClick={confirmIssue} disabled={issuing}>
               지급 확정
             </Button>
           </DialogFooter>

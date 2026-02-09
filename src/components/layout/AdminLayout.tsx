@@ -18,20 +18,20 @@ export function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-8 py-6">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-[#c7d3e6] bg-card">
+        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-6">
           <div>
-            <p className="text-sm text-blue-600 font-semibold">DANZZAN Operations</p>
-            <h1 className="text-2xl font-semibold text-gray-900">통합 관리자 포털</h1>
+            <p className="text-sm text-primary font-semibold">DANZZAN Operations</p>
+            <h1 className="text-2xl font-semibold text-foreground">통합 관리자 포털</h1>
           </div>
           <div className="flex items-center gap-3">
             {env.apiMode === "mock" && (
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-warning/15 px-3 py-1 text-xs font-semibold text-warning">
                 MOCK MODE
               </span>
             )}
-            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+            <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
               관리자
             </span>
             <Button variant="outline" onClick={handleLogout} className="h-9">
@@ -50,8 +50,8 @@ export function AdminLayout() {
               className={({ isActive }) =>
                 `${linkBase} ${
                   isActive
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-100"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-muted-foreground hover:bg-muted"
                 }`
               }
             >
@@ -66,8 +66,8 @@ export function AdminLayout() {
                 className={({ isActive }) =>
                   `${linkBase} ${
                     isActive
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-600 hover:bg-gray-100"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-muted-foreground hover:bg-muted"
                   }`
                 }
               >
@@ -79,8 +79,8 @@ export function AdminLayout() {
                 className={({ isActive }) =>
                   `${linkBase} ${
                     isActive
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-600 hover:bg-gray-100"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-muted-foreground hover:bg-muted"
                   }`
                 }
               >

@@ -68,8 +68,8 @@ export default function NoticeAdminPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">공지사항 관리</h2>
-          <p className="text-sm text-gray-500">학생 앱에 노출되는 공지를 등록합니다.</p>
+          <h2 className="text-2xl font-semibold text-foreground">공지사항 관리</h2>
+          <p className="text-sm text-muted-foreground">학생 앱에 노출되는 공지를 등록합니다.</p>
         </div>
         <Button onClick={() => setShowForm((prev) => !prev)}>
           {showForm ? "작성 닫기" : "새 공지 작성"}
@@ -77,7 +77,7 @@ export default function NoticeAdminPage() {
       </div>
 
       {error && (
-        <Card className="p-4 border border-red-200 bg-red-50 text-sm text-red-700">
+        <Card className="p-4 border border-danger/30 bg-danger/10 text-sm text-danger">
           {error.message}
         </Card>
       )}
@@ -114,7 +114,7 @@ export default function NoticeAdminPage() {
               className="min-h-[140px]"
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-gray-600">
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
             <input
               type="checkbox"
               checked={isUrgent}
@@ -146,14 +146,14 @@ export default function NoticeAdminPage() {
           <TableBody>
             {notices.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-sm text-gray-500">
+                <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
                   등록된 공지가 없습니다.
                 </TableCell>
               </TableRow>
             )}
             {notices.map((notice) => (
               <TableRow key={notice.id}>
-                <TableCell className="font-medium text-gray-900">{notice.title}</TableCell>
+                <TableCell className="font-medium text-foreground">{notice.title}</TableCell>
                 <TableCell>{notice.author || "-"}</TableCell>
                 <TableCell>{notice.createdAt ? new Date(notice.createdAt).toLocaleString() : "-"}</TableCell>
                 <TableCell>{notice.isUrgent ? "긴급" : "-"}</TableCell>

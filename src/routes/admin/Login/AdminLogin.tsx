@@ -14,15 +14,15 @@ const systems = [
     id: "wristband",
     label: "팔찌 배부 운영 시스템",
     icon: Ticket,
-    iconBg: "bg-rose-100",
-    iconColor: "text-rose-500",
+    iconBg: "bg-primary-soft",
+    iconColor: "text-primary",
   },
   {
     id: "board",
     label: "공지사항 · 분실물 게시판 관리",
     icon: Megaphone,
-    iconBg: "bg-slate-100",
-    iconColor: "text-slate-600",
+    iconBg: "bg-muted",
+    iconColor: "text-muted-foreground",
   },
 ];
 
@@ -73,19 +73,19 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f7fb] flex flex-col items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
       <div className="text-center space-y-2">
-        <p className="text-3xl font-bold tracking-tight text-gray-900">DAN-SPOT</p>
-        <p className="text-sm text-gray-500">Festival Operations Admin System</p>
+        <p className="text-3xl font-bold tracking-tight text-foreground">DAN-SPOT</p>
+        <p className="text-sm text-muted-foreground">Festival Operations Admin System</p>
       </div>
 
-      <Card className="mt-8 w-full max-w-2xl p-10 shadow-xl border border-gray-200">
+      <Card className="mt-8 w-full max-w-2xl p-10 shadow-sm border-border">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold text-gray-900">관리자 시스템 로그인</h1>
+          <h1 className="text-xl font-semibold text-foreground">관리자 시스템 로그인</h1>
         </div>
 
         <div className="mt-8 space-y-3">
-          <p className="text-sm font-semibold text-gray-700">접속 시스템</p>
+          <p className="text-sm font-semibold text-foreground">접속 시스템</p>
           <div className="space-y-3" role="radiogroup" aria-label="접속 시스템 선택">
             {systems.map((system) => {
               const isSelected = selectedSystem === system.id;
@@ -101,15 +101,15 @@ export default function AdminLogin() {
                   className={cn(
                     "flex w-full items-center justify-between rounded-xl border px-4 py-4 text-left transition",
                     isSelected
-                      ? "border-blue-500 bg-blue-50 shadow-[0_0_0_2px_rgba(59,130,246,0.2)]"
-                      : "border-gray-200 bg-white hover:border-gray-300",
+                      ? "border-primary bg-primary-soft shadow-[0_0_0_2px_rgba(30,79,143,0.18)]"
+                      : "border-border bg-card hover:border-muted-foreground/40",
                   )}
                 >
                   <div className="flex items-center gap-4">
                     <span
                       className={cn(
                         "h-2.5 w-2.5 rounded-full border",
-                        isSelected ? "border-blue-600 bg-blue-600" : "border-gray-300 bg-white",
+                        isSelected ? "border-primary bg-primary" : "border-border bg-card",
                       )}
                     />
                     <span
@@ -120,12 +120,12 @@ export default function AdminLogin() {
                     >
                       <Icon className={cn("h-5 w-5", system.iconColor)} />
                     </span>
-                    <span className="text-sm font-semibold text-gray-800">{system.label}</span>
+                    <span className="text-sm font-semibold text-foreground">{system.label}</span>
                   </div>
                   <span
                     className={cn(
                       "flex h-7 w-7 items-center justify-center rounded-full border",
-                      isSelected ? "border-blue-600 bg-blue-600" : "border-gray-200 bg-white",
+                      isSelected ? "border-primary bg-primary" : "border-border bg-card",
                     )}
                   >
                     {isSelected && <Check className="h-4 w-4 text-white" />}
@@ -144,7 +144,7 @@ export default function AdminLogin() {
               value={studentId}
               onChange={(event) => setStudentId(event.target.value)}
               placeholder="학번을 입력하세요"
-              className="bg-gray-50"
+              className="bg-card"
               required
             />
           </div>
@@ -156,16 +156,16 @@ export default function AdminLogin() {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="비밀번호를 입력하세요"
-              className="bg-gray-50"
+              className="bg-card"
               required
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-danger">{error}</p>}
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full"
             disabled={submitting}
           >
             {submitting ? "로그인 중..." : "관리자 로그인"}
@@ -173,7 +173,7 @@ export default function AdminLogin() {
         </form>
       </Card>
 
-      <p className="mt-6 text-xs text-gray-400">
+      <p className="mt-6 text-xs text-muted-foreground">
         본 시스템은 총학생회 및 운영진 전용 내부 관리 도구입니다.
       </p>
     </div>
