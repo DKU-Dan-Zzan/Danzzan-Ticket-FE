@@ -20,20 +20,30 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-[#c7d3e6] bg-card">
-        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-6">
+        <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-8 py-4">
           <div>
-            <p className="text-sm text-primary font-semibold">DAN-ZZAN Operations</p>
-            <h1 className="text-2xl font-semibold text-foreground">통합 관리자 포털</h1>
+            <p className="text-base text-primary font-semibold">DAN-ZZAN Operations</p>
+            <h1 className="text-3xl font-semibold text-foreground">통합 관리자 포털</h1>
           </div>
           <div className="flex items-center gap-3">
             {env.apiMode === "mock" && (
-              <span className="rounded-full bg-warning/15 px-3 py-1 text-xs font-semibold text-warning">
+              <span className="rounded-full bg-warning/15 px-3 py-1 text-sm font-semibold text-warning">
                 MOCK MODE
               </span>
             )}
-            <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
+            <span className="rounded-full bg-primary-soft px-3 py-1 text-sm font-semibold text-primary">
               관리자
             </span>
+            {adminSystem === "wristband" && (
+              <span className="rounded-full border border-[#c7d3e6] bg-white px-3 py-1 text-sm font-semibold text-muted-foreground">
+                분실물/공지사항은 로그아웃 후 이용 가능합니다
+              </span>
+            )}
+            {adminSystem === "board" && (
+              <span className="rounded-full border border-[#c7d3e6] bg-white px-3 py-1 text-sm font-semibold text-muted-foreground">
+                팔찌배부시스템은 로그아웃 후 이용가능합니다
+              </span>
+            )}
             <Button variant="outline" onClick={handleLogout} className="h-9">
               로그아웃
             </Button>
@@ -43,7 +53,7 @@ export function AdminLayout() {
 
       <div className="mx-auto w-full max-w-[1600px] px-8 py-6">
         <nav className="flex flex-wrap items-center gap-2">
-          {adminSystem === "wristband" && (
+          {/* {adminSystem === "wristband" && (
             <NavLink
               to="/admin/wristband"
               end
@@ -57,7 +67,7 @@ export function AdminLayout() {
             >
               Wristband
             </NavLink>
-          )}
+          )} */}
           {adminSystem === "board" && (
             <>
               <NavLink
