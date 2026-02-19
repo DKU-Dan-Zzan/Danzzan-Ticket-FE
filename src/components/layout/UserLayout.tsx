@@ -66,11 +66,11 @@ export function UserLayout() {
               </h1>
             </div>
 
-            <div className="flex items-center rounded-lg border border-[#cbdaef] bg-[#edf4ff]/65 p-0.5">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant="ghost"
                 onClick={handleGoHome}
-                className="h-9 w-9 rounded-md p-0 text-[#334155] hover:bg-[#dbe8ff]"
+                className="h-10 w-10 rounded-lg border border-[#cbdaef] bg-[#edf4ff]/65 p-0 text-[#334155] hover:bg-[#dbe8ff]"
                 aria-label="티켓팅 포털 홈으로 이동"
                 title="티켓팅 포털 홈으로 이동"
               >
@@ -79,11 +79,12 @@ export function UserLayout() {
               <Button
                 variant="ghost"
                 onClick={handleLogout}
-                className="h-9 w-9 rounded-md p-0 text-[#334155] hover:bg-[#dbe8ff]"
-                aria-label="학생 로그아웃"
-                title="학생 로그아웃"
+                className="h-10 rounded-lg border border-[#cbdaef] bg-[#edf4ff]/65 px-2.5 text-xs font-semibold text-[#334155] hover:bg-[#dbe8ff]"
+                aria-label="로그아웃"
+                title="로그아웃"
               >
                 <LogOut className="h-4 w-4" />
+                로그아웃
               </Button>
             </div>
           </div>
@@ -93,7 +94,7 @@ export function UserLayout() {
       <main
         className={
           showHeader
-            ? "relative mx-auto w-full max-w-md px-4 py-4"
+            ? "relative mx-auto w-full max-w-md px-4 pt-6 pb-4"
             : "relative mx-auto min-h-screen w-full max-w-md"
         }
       >

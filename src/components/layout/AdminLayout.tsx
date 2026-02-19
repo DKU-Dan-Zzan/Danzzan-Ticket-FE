@@ -17,7 +17,9 @@ export function AdminLayout() {
       <header className="border-b border-[#c7d3e6] bg-card">
         <div className="mx-auto flex w-full max-w-[1360px] items-center justify-between px-8 py-4">
           <div>
-            <p className="text-base text-primary font-semibold">DAN-ZZAN Operations</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5f7eb1]">
+              ADMIN PORTAL
+            </p>
             <h1 className="text-3xl font-semibold text-foreground">팔찌 배부 관리자 포털</h1>
           </div>
           <div className="flex items-center gap-3">
