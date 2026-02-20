@@ -26,13 +26,7 @@ export default function Signup() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const festivalHomeUrl = (import.meta.env.VITE_FESTIVAL_HOME_URL as string | undefined)?.trim() ?? "";
   const hasFestivalHomeUrl = Boolean(festivalHomeUrl);
-  const canSubmit =
-    dkuStudentId.trim().length > 0 &&
-    dkuPassword.trim().length > 0 &&
-    password.length >= 4 &&
-    passwordConfirm.trim().length > 0 &&
-    password === passwordConfirm &&
-    privacyConsent;
+  const canSubmit = !submitting;
   const inputClassName =
     "h-11 rounded-2xl border-[var(--border-base)] bg-[var(--surface-subtle)] px-4 placeholder:text-[var(--text-muted)] transition-all duration-200 focus-visible:border-[var(--accent)] focus-visible:ring-[var(--accent)]/20";
 
@@ -40,13 +34,23 @@ export default function Signup() {
     event.preventDefault();
     setError(null);
 
-    if (password !== passwordConfirm) {
-      setError("비밀번호가 일치하지 않습니다.");
+    if (!dkuStudentId.trim() || !dkuPassword.trim()) {
+      setError("학번과 포털 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    if (!password || !passwordConfirm) {
+      setError("서비스 비밀번호를 입력해 주세요.");
       return;
     }
 
     if (password.length < 4) {
       setError("비밀번호는 4자 이상이어야 합니다.");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      setError("서비스 비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -247,7 +251,7 @@ export default function Signup() {
             <Button
               type="submit"
               className="h-11 w-full rounded-2xl bg-[var(--accent)] text-white shadow-[0_10px_18px_-12px_var(--shadow-color)] transition-all duration-200 hover:translate-y-[-1px] hover:brightness-95 disabled:translate-y-0 disabled:opacity-55"
-              disabled={submitting || !canSubmit}
+              disabled={submitting}
             >
               <KeyRound className="h-4 w-4" strokeWidth={2.3} />
               {submitting ? loadingMessage || "처리 중..." : "재학생 인증 및 티켓팅 시작"}
