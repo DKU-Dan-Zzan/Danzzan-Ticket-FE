@@ -111,7 +111,9 @@ export const wristbandApi = {
       return;
     }
 
-    // TODO: 백엔드 지급 취소 API가 확정되면 해당 endpoint로 교체
-    throw new Error("지급 취소 API가 아직 연동되지 않았습니다. 현재는 mock 모드에서만 테스트 가능합니다.");
+    const client = getClient();
+    await client.patch<ApiResponse<IssueTicketResponseDto>>(
+      `/api/admin/events/${eventId}/tickets/${ticketId}/cancel`,
+    );
   },
 };
