@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { CircleAlert, GraduationCap, House, ShieldCheck } from "lucide-react";
-import { AuthSegmentedControl } from "@/components/auth/AuthSegmentedControl";
 import { Button } from "@/components/common/ui/button";
 import { Input } from "@/components/common/ui/input";
 import { Label } from "@/components/common/ui/label";
@@ -77,11 +76,7 @@ export default function Login() {
           </div>
         </section>
 
-        <div className="mt-6">
-          <AuthSegmentedControl activeTab="login" />
-        </div>
-
-        <main className="pt-6">
+        <main className="mt-6">
           <form className="space-y-5" onSubmit={handleSubmit}>
             <section className="space-y-4">
               <div className="space-y-2">
