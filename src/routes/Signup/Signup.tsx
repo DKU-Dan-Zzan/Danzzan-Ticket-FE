@@ -183,7 +183,7 @@ export default function Signup() {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-semibold text-[var(--text)]">
-                  서비스 비밀번호
+                  서비스용 비밀번호
                 </Label>
                 <Input
                   id="password"

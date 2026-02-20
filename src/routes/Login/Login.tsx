@@ -102,7 +102,7 @@ export default function Login() {
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  placeholder="비밀번호를 입력해 주세요"
+                  placeholder="서비스용 비밀번호를 입력해 주세요"
                   className={inputClassName}
                   required
                 />
