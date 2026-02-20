@@ -6,7 +6,6 @@ import {
   House,
   KeyRound,
 } from "lucide-react";
-import { AuthSegmentedControl } from "@/components/auth/AuthSegmentedControl";
 import { Button } from "@/components/common/ui/button";
 import { Checkbox } from "@/components/common/ui/checkbox";
 import { Input } from "@/components/common/ui/input";
@@ -130,11 +129,7 @@ export default function Signup() {
           </div>
         </section>
 
-        <div className="mt-6">
-          <AuthSegmentedControl activeTab="signup" />
-        </div>
-
-        <main className="pt-6">
+        <main className="mt-6">
           <form className="space-y-5" onSubmit={handleSubmit}>
             <section className="space-y-4">
               <div className="space-y-2">
