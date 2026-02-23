@@ -5,6 +5,8 @@ import { cn } from "@/components/common/ui/utils";
 export const TICKETING_WIDE_PANEL_CLASS = "mx-auto w-full max-w-3xl space-y-4 pb-6";
 export const TICKETING_NARROW_PANEL_CLASS = "mx-auto w-full max-w-xl pb-7";
 export const TICKETING_MIDDLE_PANEL_CLASS = "mx-auto w-full max-w-md space-y-5 pb-4";
+const TICKETING_UNIFIED_CARD_CONTAINER_CLASS =
+  "rounded-[28px] border-[var(--border-base)] bg-[linear-gradient(155deg,var(--surface-base)_0%,var(--surface-tint-base)_100%)] shadow-[0_18px_30px_-24px_var(--shadow-color)]";
 
 export const TICKETING_CLASSES = {
   card: {
@@ -13,14 +15,14 @@ export const TICKETING_CLASSES = {
     summaryInfo:
       "rounded-[20px] border-[var(--border-base)] bg-[var(--surface-base)] shadow-[0_12px_22px_-20px_var(--shadow-color)]",
     event:
-      "relative overflow-hidden rounded-[28px] border-[var(--border-base)] bg-[linear-gradient(155deg,var(--surface-base)_0%,var(--surface-tint-base)_100%)] shadow-[0_18px_30px_-24px_var(--shadow-color)]",
+      `relative overflow-hidden ${TICKETING_UNIFIED_CARD_CONTAINER_CLASS}`,
     paper:
       "relative overflow-hidden rounded-[24px] border-[var(--ticket-paper-border)] bg-[var(--ticket-paper-base)] shadow-[0_14px_24px_-18px_var(--shadow-color)]",
     success:
       "relative w-full overflow-hidden rounded-[28px] border-[var(--border-base)] bg-[var(--surface-base)] shadow-[0_18px_30px_-24px_var(--shadow-color)]",
     soldout:
       "rounded-[28px] border-[var(--status-danger-border)] bg-[var(--status-danger-bg)] shadow-[0_18px_30px_-24px_var(--status-danger-border)]",
-    infoBanner: "rounded-[28px] border-[var(--border-strong)] bg-[linear-gradient(145deg,var(--surface-tint-strong)_0%,var(--surface-base)_100%)]",
+    infoBanner: `relative overflow-hidden ${TICKETING_UNIFIED_CARD_CONTAINER_CLASS}`,
     caution: "rounded-2xl border border-[var(--status-warning-border)] bg-[linear-gradient(90deg,var(--status-warning-bg)_0%,var(--surface-base)_100%)]",
     policy: "rounded-2xl border border-[var(--border-base)] bg-[var(--surface-base)]",
     agreement: "space-y-3 rounded-2xl border border-[var(--border-strong)] bg-[linear-gradient(145deg,var(--surface-tint-strong)_0%,var(--surface-base)_100%)]",
