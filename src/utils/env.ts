@@ -1,14 +1,29 @@
 export type ApiMode = "live" | "mock";
+export type BackendTarget = "serverdb" | "compose";
 
 const resolveApiMode = (value?: string): ApiMode => {
   return value === "mock" ? "mock" : "live";
+};
+
+const resolveBackendTarget = (value?: string): BackendTarget => {
+  return value === "compose" ? "compose" : "serverdb";
 };
 
 const normalizeEnv = (value?: string): string => {
   return value?.trim() ?? "";
 };
 
-const resolveApiBaseUrl = (): string => {
+const resolveDefaultApiBaseUrl = (target: BackendTarget): string => {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const port = target === "compose" ? 8081 : 8080;
+    return `http://${host}:${port}`;
+  }
+
+  return "";
+};
+
+const resolveApiBaseUrl = (target: BackendTarget): string => {
   const configured = normalizeEnv(
     import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL,
   );
@@ -17,16 +32,14 @@ const resolveApiBaseUrl = (): string => {
     return configured;
   }
 
-  if (typeof window !== "undefined") {
-    return `http://${window.location.hostname}:8080`;
-  }
-
-  return "";
+  return resolveDefaultApiBaseUrl(target);
 };
 
-const apiBaseUrl = resolveApiBaseUrl();
+const backendTarget = resolveBackendTarget(import.meta.env.VITE_BACKEND_TARGET);
+const apiBaseUrl = resolveApiBaseUrl(backendTarget);
 
 export const env = {
+  backendTarget,
   apiBaseUrl,
   ticketingApiBaseUrl:
     normalizeEnv(import.meta.env.VITE_TICKETING_API_BASE_URL) || apiBaseUrl,
