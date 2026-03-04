@@ -11,11 +11,8 @@ export function ReservationSuccessPanel({
   onGoMyTickets,
 }: ReservationSuccessPanelProps) {
   return (
-    <div className={TICKETING_NARROW_PANEL_CLASS}>
+    <div className={`${TICKETING_NARROW_PANEL_CLASS} flex min-h-[calc(100dvh-10rem)] items-center`}>
       <Card className={`${TICKETING_CLASSES.card.success} px-5 py-6`}>
-        <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[var(--surface-tint-strong)] opacity-70 blur-xl" />
-        <div className="pointer-events-none absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-[var(--surface-tint-strong)] opacity-65 blur-xl" />
-
         <div className="relative">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-strong)] bg-[linear-gradient(145deg,var(--surface-tint-strong)_0%,var(--surface-strong)_100%)] px-3 py-1 text-[length:var(--ticketing-text-badge)] font-semibold tracking-[0.01em] text-[var(--accent)]">
             <CheckCircle2 className="h-3.5 w-3.5" />

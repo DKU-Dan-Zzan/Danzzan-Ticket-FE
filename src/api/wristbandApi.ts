@@ -26,7 +26,7 @@ const getClient = () =>
   createHttpClient({
     baseUrl: requireEnv(
       env.apiBaseUrl || env.ticketingApiBaseUrl,
-      "VITE_API_URL",
+      "VITE_API_BASE_URL (or VITE_API_URL)",
     ),
     getAccessToken: authStore.getAccessToken,
   });

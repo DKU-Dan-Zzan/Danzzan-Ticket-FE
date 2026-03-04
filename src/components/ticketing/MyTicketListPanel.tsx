@@ -2,10 +2,12 @@ import { Button } from "@/components/common/ui/button";
 import { Card } from "@/components/common/ui/card";
 import { TicketCheck } from "lucide-react";
 import { PaperTicketCard } from "@/components/ticketing/PaperTicketCard";
+import { TicketingAdBannerCard } from "@/components/ticketing/TicketingAdBannerCard";
 import {
   TICKETING_CLASSES,
   TicketingRefreshButton,
 } from "@/components/ticketing/ticketingShared";
+import type { PlacementAd } from "@/types/model/ad.model";
 import type { Ticket } from "@/types/model/ticket.model";
 
 interface StudentSummary {
@@ -18,6 +20,7 @@ interface MyTicketListPanelProps {
   student: StudentSummary;
   loading: boolean;
   errorMessage: string | null;
+  ad: PlacementAd | null;
   onRefresh: () => void;
   onGoTicketing: () => void;
 }
@@ -27,6 +30,7 @@ export function MyTicketListPanel({
   student,
   loading,
   errorMessage,
+  ad,
   onRefresh,
   onGoTicketing,
 }: MyTicketListPanelProps) {
@@ -113,6 +117,8 @@ export function MyTicketListPanel({
           </Button>
         </Card>
       )}
+
+      <TicketingAdBannerCard ad={ad} />
     </div>
   );
 }

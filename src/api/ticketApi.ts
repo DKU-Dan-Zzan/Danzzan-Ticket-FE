@@ -1,17 +1,28 @@
 import { createHttpClient } from "@/api/httpClient";
 import {
+  normalizeQueueEnterContract,
+  normalizeQueueStatusContract,
+  normalizeReserveContract,
+  unwrapApiObjectEnvelope,
+} from "@/api/ticketContract";
+import {
+  mapQueueEnterDtoToModel,
+  mapQueueStatusDtoToModel,
   mapTicketEventListDtoToModel,
   mapTicketListDtoToModel,
   mapTicketReservationDtoToModel,
 } from "@/mappers/ticketMapper";
 import { authStore } from "@/store/authStore";
 import type {
-  ReserveTicketRequestDto,
   TicketEventListResponseDto,
   TicketListResponseDto,
+  TicketQueueEnterResponseDto,
+  TicketQueueStatusResponseDto,
   TicketReservationResponseDto,
 } from "@/types/dto/ticket.dto";
 import type {
+  QueueEnterResult,
+  QueueStatusResult,
   Ticket,
   TicketingEvent,
   TicketReservationResult,
@@ -20,9 +31,16 @@ import { env, requireEnv } from "@/utils/env";
 
 const getTicketingClient = () =>
   createHttpClient({
-    baseUrl: requireEnv(env.ticketingApiBaseUrl, "VITE_TICKETING_API_BASE_URL"),
+    baseUrl: requireEnv(
+      env.ticketingApiBaseUrl,
+      "VITE_TICKETING_API_BASE_URL (or VITE_API_BASE_URL)",
+    ),
     getAccessToken: authStore.getAccessToken,
   });
+
+type ApiEnvelope<T> = {
+  data?: T | null;
+} & Record<string, unknown>;
 
 const addMinutesToIso = (minutes: number) => {
   return new Date(Date.now() + minutes * 60_000).toISOString();
@@ -121,6 +139,18 @@ const createMockReservationDto = (eventId: string): TicketReservationResponseDto
   };
 };
 
+type MockQueueSession = {
+  remaining: number;
+  pollCount: number;
+  terminalStatus: "ADMITTED" | "SUCCESS";
+};
+
+const mockQueueByEvent = new Map<string, MockQueueSession>();
+let mockJoinSequence = 0;
+const MOCK_QUEUE_INITIAL_REMAINING = 500;
+const MOCK_QUEUE_DECREMENT_PER_POLL = 12;
+const MOCK_QUEUE_TERMINAL_POLL_COUNT = 12;
+
 export const ticketApi = {
   getTicketingEvents: async (): Promise<TicketingEvent[]> => {
     if (env.apiMode === "mock") {
@@ -129,25 +159,105 @@ export const ticketApi = {
 
     const client = getTicketingClient();
     // TODO(ticketing-api): Confirm endpoint path and response spec for student ticketing event list.
-    const dto = await client.get<TicketEventListResponseDto>("/tickets/events");
-    return mapTicketEventListDtoToModel(dto ?? {});
+    const raw = await client.get<TicketEventListResponseDto | ApiEnvelope<TicketEventListResponseDto>>("/tickets/events");
+    const dto = unwrapApiObjectEnvelope<TicketEventListResponseDto>(raw, "/tickets/events");
+    return mapTicketEventListDtoToModel(dto);
+  },
+
+  enterTicketQueue: async (
+    eventId: string,
+    signal?: AbortSignal,
+  ): Promise<QueueEnterResult> => {
+    if (env.apiMode === "mock") {
+      const event = createMockTicketingEventsDto().items?.find((item) => `${item.id}` === eventId);
+      if (!event) {
+        return { status: "NONE", remaining: null };
+      }
+      if (event.status === "soldout" || event.remainingCount === 0) {
+        return { status: "SOLD_OUT", remaining: 0 };
+      }
+
+      mockJoinSequence += 1;
+      const session: MockQueueSession = {
+        remaining: MOCK_QUEUE_INITIAL_REMAINING,
+        pollCount: 0,
+        terminalStatus: mockJoinSequence % 2 === 0 ? "SUCCESS" : "ADMITTED",
+      };
+      mockQueueByEvent.set(eventId, session);
+      return {
+        status: "WAITING",
+        remaining: session.remaining,
+      };
+    }
+
+    const client = getTicketingClient();
+    const raw = await client.post<TicketQueueEnterResponseDto | ApiEnvelope<TicketQueueEnterResponseDto>>(
+      `/tickets/${eventId}/queue/enter`,
+      undefined,
+      { signal },
+    );
+    const dto = unwrapApiObjectEnvelope<TicketQueueEnterResponseDto>(
+      raw,
+      `/tickets/${eventId}/queue/enter`,
+    );
+    const normalizedDto = normalizeQueueEnterContract(dto, `/tickets/${eventId}/queue/enter`);
+    return mapQueueEnterDtoToModel(normalizedDto);
+  },
+
+  getTicketQueueStatus: async (
+    eventId: string,
+    signal?: AbortSignal,
+  ): Promise<QueueStatusResult> => {
+    if (env.apiMode === "mock") {
+      const session = mockQueueByEvent.get(eventId);
+      if (!session) {
+        return { status: "NONE" };
+      }
+
+      session.pollCount += 1;
+      session.remaining = Math.max(session.remaining - MOCK_QUEUE_DECREMENT_PER_POLL, 0);
+
+      if (session.pollCount >= MOCK_QUEUE_TERMINAL_POLL_COUNT) {
+        mockQueueByEvent.delete(eventId);
+        return { status: session.terminalStatus };
+      }
+
+      return { status: "WAITING" };
+    }
+
+    const client = getTicketingClient();
+    const raw = await client.get<TicketQueueStatusResponseDto | ApiEnvelope<TicketQueueStatusResponseDto>>(
+      `/tickets/${eventId}/queue/status`,
+      { signal },
+    );
+    const dto = unwrapApiObjectEnvelope<TicketQueueStatusResponseDto>(
+      raw,
+      `/tickets/${eventId}/queue/status`,
+    );
+    const normalizedDto = normalizeQueueStatusContract(dto, `/tickets/${eventId}/queue/status`);
+    return mapQueueStatusDtoToModel(normalizedDto);
   },
 
   reserveTicket: async (
     eventId: string,
-    payload: ReserveTicketRequestDto,
+    signal?: AbortSignal,
   ): Promise<TicketReservationResult> => {
     if (env.apiMode === "mock") {
       return mapTicketReservationDtoToModel(createMockReservationDto(eventId));
     }
 
     const client = getTicketingClient();
-    // TODO(ticketing-api): Confirm endpoint path and payload schema for ticket reservation.
-    const dto = await client.post<TicketReservationResponseDto>(
+    const raw = await client.post<TicketReservationResponseDto | ApiEnvelope<TicketReservationResponseDto>>(
       `/tickets/${eventId}/reserve`,
-      payload,
+      undefined,
+      { signal },
     );
-    return mapTicketReservationDtoToModel(dto ?? {});
+    const dto = unwrapApiObjectEnvelope<TicketReservationResponseDto>(
+      raw,
+      `/tickets/${eventId}/reserve`,
+    );
+    const normalizedDto = normalizeReserveContract(dto, `/tickets/${eventId}/reserve`);
+    return mapTicketReservationDtoToModel(normalizedDto);
   },
 
   getRemainingCount: async (eventId: string): Promise<{ eventId: number; remaining: number }> => {
@@ -168,7 +278,8 @@ export const ticketApi = {
 
     const client = getTicketingClient();
     // TODO(ticketing-api): Confirm endpoint path for student my-ticket list.
-    const dto = await client.get<TicketListResponseDto>("/tickets/me");
-    return mapTicketListDtoToModel(dto ?? {});
+    const raw = await client.get<TicketListResponseDto | ApiEnvelope<TicketListResponseDto>>("/tickets/me");
+    const dto = unwrapApiObjectEnvelope<TicketListResponseDto>(raw, "/tickets/me");
+    return mapTicketListDtoToModel(dto);
   },
 };
