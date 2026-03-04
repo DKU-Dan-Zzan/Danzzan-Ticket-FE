@@ -13,7 +13,7 @@ import {
   resolveQueueStatusAction,
 } from "@/routes/Ticketing/queueFlowUtils";
 
-type SmokeStep = "waiting" | "reserving" | "soldout" | "already" | "success" | "list";
+type SmokeStep = "waiting" | "in-progress" | "reserving" | "soldout" | "already" | "success" | "list";
 
 const runQueueFlowSmoke = (
   enterStatus: QueueRequestStatus,
@@ -29,9 +29,7 @@ const runQueueFlowSmoke = (
         step = "waiting";
         return;
       case "reserve":
-        step = "reserving";
-        reserveCalls += 1;
-        step = "success";
+        step = "in-progress";
         return;
       case "soldout":
         step = "soldout";
@@ -56,16 +54,16 @@ const runQueueFlowSmoke = (
 };
 
 describe("queueFlow smoke", () => {
-  it("WAITING -> ADMITTED -> reserve 성공 흐름", () => {
+  it("WAITING -> ADMITTED -> 입력/확인 화면 진입", () => {
     const result = runQueueFlowSmoke("WAITING", ["ADMITTED"]);
-    expect(result.step).toBe("success");
-    expect(result.reserveCalls).toBe(1);
+    expect(result.step).toBe("in-progress");
+    expect(result.reserveCalls).toBe(0);
   });
 
-  it("WAITING -> SUCCESS -> reserve 성공 흐름", () => {
+  it("WAITING -> SUCCESS -> 입력/확인 화면 진입", () => {
     const result = runQueueFlowSmoke("WAITING", ["SUCCESS"]);
-    expect(result.step).toBe("success");
-    expect(result.reserveCalls).toBe(1);
+    expect(result.step).toBe("in-progress");
+    expect(result.reserveCalls).toBe(0);
   });
 
   it("WAITING -> SOLD_OUT 분기", () => {

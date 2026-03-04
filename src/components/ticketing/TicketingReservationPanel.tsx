@@ -1,9 +1,7 @@
-import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/common/ui/button";
 import { Card } from "@/components/common/ui/card";
-import { Input } from "@/components/common/ui/input";
+import { Checkbox } from "@/components/common/ui/checkbox";
 import { cn } from "@/components/common/ui/utils";
-import { REQUIRED_ACKNOWLEDGEMENT_CODE } from "@/components/ticketing/ticketingConstants";
 import {
   TICKETING_CLASSES,
   TICKETING_NARROW_PANEL_CLASS,
@@ -12,10 +10,10 @@ import {
 
 interface TicketingReservationPanelProps {
   eventTitle: string;
-  agreementInput: string;
+  agreementChecked: boolean;
   submitting: boolean;
   errorMessage: string | null;
-  onAgreementInputChange: (value: string) => void;
+  onAgreementCheckedChange: (checked: boolean) => void;
   onSubmit: () => void;
 }
 
@@ -66,16 +64,14 @@ const DEFAULT_POLICY_ITEMS = [
 
 export function TicketingReservationPanel({
   eventTitle,
-  agreementInput,
+  agreementChecked,
   submitting,
   errorMessage,
-  onAgreementInputChange,
+  onAgreementCheckedChange,
   onSubmit,
 }: TicketingReservationPanelProps) {
   const isMay13Ticket = eventTitle.includes("5월 13일");
-  const hasTypedAgreement = agreementInput.trim().length > 0;
-  const isAcknowledgementMatched = agreementInput.trim() === REQUIRED_ACKNOWLEDGEMENT_CODE;
-  const isSubmitEnabled = !submitting && isAcknowledgementMatched;
+  const isSubmitEnabled = !submitting && agreementChecked;
   const cautionItems = isMay13Ticket ? MAY_13_CAUTION_ITEMS : DEFAULT_CAUTION_ITEMS;
 
   return (
@@ -84,16 +80,16 @@ export function TicketingReservationPanel({
         <div>
           <h2 className={`${TICKETING_CLASSES.typography.heroTitle} text-[var(--text)]`}>예매 진행 중</h2>
           <p className={`mt-0.5 ${TICKETING_CLASSES.typography.sectionBody} text-[var(--text-muted)]`}>
-            주의사항을 확인하고 확인 문구를 정확히 입력해 예매를 완료하세요.
+            주의사항과 방침을 확인한 뒤 동의 체크 후 예매를 완료하세요.
           </p>
         </div>
       </div>
 
       <Card className="border-[var(--border-base)] bg-[var(--surface-base)] p-6 shadow-[0_10px_20px_-16px_var(--shadow-color)]">
-        <div className="space-y-5">
+        <div>
           <section className="space-y-2">
             <TicketingStepTitle step={1} title="주의사항" />
-            <div className={`${TICKETING_CLASSES.card.caution} px-4 py-3`}>
+            <div className="rounded-xl border border-[var(--status-warning-border)] bg-[var(--status-warning-bg)] px-4 py-3">
               <ul className={`space-y-1.5 ${TICKETING_CLASSES.typography.sectionBodySm} text-[var(--status-warning-text)]`}>
                 {cautionItems.map((item) => (
                   <li key={item}>• {item}</li>
@@ -102,9 +98,9 @@ export function TicketingReservationPanel({
             </div>
           </section>
 
-          <section className="space-y-2">
+          <section className="mt-5 space-y-2 border-t border-[var(--border-subtle)] pt-4">
             <TicketingStepTitle step={2} title="부정거래 관련 방침 안내" />
-            <div className={`${TICKETING_CLASSES.card.policy} px-4 py-3`}>
+            <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-subtle)] px-4 py-3">
               <div
                 className={cn(
                   `max-h-44 space-y-2 overflow-y-scroll pr-2 ${TICKETING_CLASSES.typography.sectionBodySm} text-[var(--text-muted)]`,
@@ -143,35 +139,22 @@ export function TicketingReservationPanel({
             </div>
           </section>
 
-          <section className="space-y-3">
-            <TicketingStepTitle step={3} title="동의 확인 입력" />
-
-            <div className={`${TICKETING_CLASSES.card.agreement} p-4`}>
-              <p className={`${TICKETING_CLASSES.typography.sectionBodySm} font-semibold text-[var(--text)]`}>
-                안내사항을 모두 숙지하였으며 이에 동의합니다.
-              </p>
-              <p className={`${TICKETING_CLASSES.typography.sectionBodySm} text-[var(--text-muted)]`}>
-                아래 문구를 정확히 입력하세요:
-              </p>
-              <div className="rounded-xl border border-[var(--border-strong)] bg-[linear-gradient(145deg,var(--surface-tint-strong)_0%,var(--surface-base)_100%)] px-3 py-3 text-center font-mono text-[length:var(--ticketing-text-reservation-countdown)] font-bold tracking-[0.05em] text-[var(--accent)]">
-                {REQUIRED_ACKNOWLEDGEMENT_CODE}
-              </div>
-              <div className="relative">
-                <Input
-                  value={agreementInput}
-                  onChange={(event) => onAgreementInputChange(event.target.value)}
-                  maxLength={REQUIRED_ACKNOWLEDGEMENT_CODE.length}
-                  disabled={submitting}
-                  className={cn(
-                    "h-12 rounded-xl border-[var(--border-base)] bg-[var(--surface-subtle)] pr-11 text-base",
-                    hasTypedAgreement && "border-[var(--accent)]",
-                  )}
-                />
-                {hasTypedAgreement && isAcknowledgementMatched && (
-                  <CheckCircle2 className="pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2 text-[var(--status-success)]" />
-                )}
-              </div>
-            </div>
+          <section className="mt-5 space-y-3 border-t border-[var(--border-subtle)] pt-4">
+            <TicketingStepTitle step={3} title="동의 확인" />
+            <p className={`${TICKETING_CLASSES.typography.sectionBodySm} text-[var(--text-muted)]`}>
+              아래 항목을 체크하면 예매를 진행할 수 있습니다.
+            </p>
+            <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--border-base)] bg-[var(--surface-subtle)] px-3 py-3">
+              <Checkbox
+                checked={agreementChecked}
+                disabled={submitting}
+                onCheckedChange={(checked) => onAgreementCheckedChange(Boolean(checked))}
+                className="h-5 w-5 rounded-[6px] border-[var(--border-strong)] data-[state=checked]:border-[var(--accent)] data-[state=checked]:bg-[var(--accent)]"
+              />
+              <span className={`${TICKETING_CLASSES.typography.sectionBodySm} font-semibold text-[var(--text)]`}>
+                위 사항들을 숙지했습니다.
+              </span>
+            </label>
 
             {errorMessage && <p className={`${TICKETING_CLASSES.typography.sectionBodySm} text-[var(--status-danger-text)]`}>{errorMessage}</p>}
 

@@ -9,6 +9,7 @@ import { ReservationSoldOutPanel } from "@/components/ticketing/ReservationSoldO
 import { ReservationSuccessPanel } from "@/components/ticketing/ReservationSuccessPanel";
 import { TicketingEventListPanel } from "@/components/ticketing/TicketingEventListPanel";
 import { TicketingHomePanel } from "@/components/ticketing/TicketingHomePanel";
+import { TicketingReservationPanel } from "@/components/ticketing/TicketingReservationPanel";
 import { WaitingRoomPanel } from "@/components/ticketing/WaitingRoomPanel";
 import { useTicketing } from "@/hooks/useTicketing";
 import {
@@ -24,7 +25,7 @@ import {
 import type { PlacementAd } from "@/types/model/ad.model";
 import type { QueueRequestStatus, ReserveErrorCode, TicketingEvent } from "@/types/model/ticket.model";
 
-type TicketingStep = "home" | "list" | "waiting" | "reserving" | "soldout" | "already" | "success";
+type TicketingStep = "home" | "list" | "waiting" | "in-progress" | "reserving" | "soldout" | "already" | "success";
 
 interface ParsedApiError {
   status: number | null;
@@ -110,6 +111,8 @@ export default function Ticketing() {
   const [reserveProcessing, setReserveProcessing] = useState(false);
   const [reserveErrorMessage, setReserveErrorMessage] = useState<string | null>(null);
   const [reserveMessage, setReserveMessage] = useState("입장 상태가 확인되어 예매를 진행하고 있습니다.");
+  const [agreementChecked, setAgreementChecked] = useState(false);
+  const [reservationError, setReservationError] = useState<string | null>(null);
 
   const [waitingAd, setWaitingAd] = useState<PlacementAd | null>(null);
 
@@ -182,6 +185,8 @@ export default function Ticketing() {
     setReserveProcessing(false);
     setReserveErrorMessage(null);
     setReserveMessage("입장 상태가 확인되어 예매를 진행하고 있습니다.");
+    setAgreementChecked(false);
+    setReservationError(null);
   }, []);
 
   const updateWaitingRemaining = useCallback((remaining: number | null) => {
@@ -212,28 +217,33 @@ export default function Ticketing() {
       case "RESERVE_ALREADY_RESERVED":
         setStep("already");
         setActiveEventId(null);
+        setReservationError(null);
         break;
       case "RESERVE_SOLD_OUT":
         setStep("soldout");
         setActiveEventId(null);
+        setReservationError(null);
         break;
       case "RESERVE_NOT_OPEN":
-        setStep("reserving");
+        setStep("in-progress");
         setReserveProcessing(false);
         setReserveMessage("예매 오픈 시간이 아직 되지 않았습니다. 잠시 후 다시 시도해주세요.");
         setReserveErrorMessage("오픈 전 상태입니다. 티켓 오픈 시각 이후 다시 시도해주세요.");
+        setReservationError("오픈 전 상태입니다. 티켓 오픈 시각 이후 다시 시도해주세요.");
         break;
       case "EVENT_NOT_FOUND":
         setActiveEventId(null);
         setListNotice("해당 티켓 정보를 찾을 수 없어 목록으로 이동합니다.");
+        setReservationError(null);
         await moveToList({ preserveNotice: true });
         break;
       case "TEMPORARY_ERROR":
       default:
-        setStep("reserving");
+        setStep("in-progress");
         setReserveProcessing(false);
         setReserveMessage("일시적인 오류가 발생했습니다. 네트워크 상태를 확인한 뒤 다시 시도해주세요.");
         setReserveErrorMessage("요청 처리에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        setReservationError("요청 처리에 실패했습니다. 잠시 후 다시 시도해주세요.");
         break;
     }
 
@@ -257,6 +267,7 @@ export default function Ticketing() {
     setReserveProcessing(true);
     setReserveErrorMessage(null);
     setReserveMessage("입장 상태가 확인되어 예매를 진행하고 있습니다.");
+    setReservationError(null);
 
     try {
       const reservation = await ticketApi.reserveTicket(eventId);
@@ -306,7 +317,9 @@ export default function Ticketing() {
         return;
       case "reserve":
         setWaitingError(null);
-        await executeReserve(eventId);
+        setAgreementChecked(false);
+        setReservationError(null);
+        setStep("in-progress");
         return;
       case "soldout":
         setStep("soldout");
@@ -324,7 +337,7 @@ export default function Ticketing() {
         applyQueueEventToUrl(null);
         await moveToList({ preserveNotice: true });
     }
-  }, [applyQueueEventToUrl, executeReserve, moveToList, updateWaitingRemaining]);
+  }, [applyQueueEventToUrl, moveToList, updateWaitingRemaining]);
 
   const checkQueueStatus = useCallback(async (
     eventId: string,
@@ -373,6 +386,8 @@ export default function Ticketing() {
     setWaitingError(null);
     setWaitingRemaining(null);
     setWaitingRemainingUpdatedAt(null);
+    setAgreementChecked(false);
+    setReservationError(null);
     setQueueStatus("WAITING");
     setStep("waiting");
     applyQueueEventToUrl(event.id);
@@ -394,6 +409,27 @@ export default function Ticketing() {
       releaseSingleFlight(enterLockRef);
     }
   }, [applyQueueEventToUrl, handleQueueStatus, handleUnauthorized, isNetworkOnline, moveToList]);
+
+  const handleAgreementCheckedChange = useCallback((checked: boolean) => {
+    setAgreementChecked(checked);
+    if (reservationError) {
+      setReservationError(null);
+    }
+  }, [reservationError]);
+
+  const handleSubmitReservation = useCallback(() => {
+    if (!activeEventId) {
+      return;
+    }
+
+    if (!agreementChecked) {
+      setReservationError("위 사항을 숙지하신 후 체크해주세요.");
+      return;
+    }
+
+    setReservationError(null);
+    void executeReserve(activeEventId);
+  }, [activeEventId, agreementChecked, executeReserve]);
 
   useEffect(() => {
     if (step !== "list") {
@@ -645,6 +681,19 @@ export default function Ticketing() {
         offline={!isNetworkOnline}
         errorMessage={waitingError}
         ad={waitingAd}
+      />
+    );
+  }
+
+  if (step === "in-progress") {
+    return (
+      <TicketingReservationPanel
+        eventTitle={activeEventTitle}
+        agreementChecked={agreementChecked}
+        submitting={reserveProcessing}
+        errorMessage={reservationError}
+        onAgreementCheckedChange={handleAgreementCheckedChange}
+        onSubmit={handleSubmitReservation}
       />
     );
   }
