@@ -24,7 +24,7 @@ export function ReservationSoldOutPanel({ onBackToList }: ReservationSoldOutPane
           </div>
           <div>
             <h2 className={`${TICKETING_CLASSES.typography.stateTitle} text-[var(--text)]`}>
-              티켓이 매진되었어요.
+              티켓 매진
             </h2>
             <p className={`mt-1 ${TICKETING_CLASSES.typography.stateBody} text-[var(--text-muted)]`}>
               다른 티켓팅 일정은 티켓팅 목록에서 확인하실 수 있어요.
