@@ -1,7 +1,8 @@
-import { Megaphone } from "lucide-react";
+import { Ticket } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/common/ui/card";
 import { Progress } from "@/components/common/ui/progress";
+import { TicketingAdBannerCard } from "@/components/ticketing/TicketingAdBannerCard";
 import {
   TICKETING_CLASSES,
   TICKETING_NARROW_PANEL_CLASS,
@@ -18,20 +19,6 @@ interface WaitingRoomPanelProps {
   errorMessage: string | null;
   ad: PlacementAd | null;
 }
-
-const WAITING_AD_PLACEHOLDER = "/ads/waiting-room-sample-banner.svg";
-
-const buildVersionedImageUrl = (imageUrl: string, updatedAt: string): string => {
-  if (!imageUrl) {
-    return WAITING_AD_PLACEHOLDER;
-  }
-  if (!updatedAt) {
-    return imageUrl;
-  }
-
-  const version = encodeURIComponent(updatedAt);
-  return imageUrl.includes("?") ? `${imageUrl}&v=${version}` : `${imageUrl}?v=${version}`;
-};
 
 const estimateWaitSeconds = (remaining: number | null): number | null => {
   if (remaining === null || remaining < 0) {
@@ -154,9 +141,6 @@ export function WaitingRoomPanel({
     : canEstimateProgress
       ? formatEta(estimateWaitSeconds(displayRemaining))
       : "확인 중";
-  const adImageUrl = ad ? buildVersionedImageUrl(ad.imageUrl, ad.updatedAt) : WAITING_AD_PLACEHOLDER;
-  const adAlt = ad?.altText?.trim() || "단짠 대기열 광고";
-  const adLink = ad?.linkUrl?.trim() || null;
 
   useEffect(() => {
     if (!canEstimateProgress) {
@@ -211,18 +195,24 @@ export function WaitingRoomPanel({
           <p className="text-right text-[length:var(--ticketing-text-card-subtitle)] font-bold text-[var(--accent)]">
             예상 대기 시간: {etaLabel}
           </p>
-          {canEstimateProgress ? (
-            <Progress
-              value={progressValue}
-              className="mt-2 h-4 rounded-full bg-[var(--surface-tint-subtle)] [&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-indicator]]:bg-[var(--accent)]"
-            />
-          ) : (
-            <div className="relative mt-2 h-4 overflow-hidden rounded-full bg-[var(--surface-tint-subtle)]">
-              <div
-                className={`h-full w-[38%] rounded-full bg-[var(--accent)] ${offline || !polling ? "opacity-40" : "animate-pulse opacity-70"}`}
+          <div className="relative mt-2">
+            {canEstimateProgress ? (
+              <Progress
+                value={progressValue}
+                className="h-5 rounded-full bg-[var(--surface-tint-subtle)] [&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-indicator]]:bg-[var(--accent)]"
               />
-            </div>
-          )}
+            ) : (
+              <div className="relative h-5 overflow-hidden rounded-full bg-[var(--surface-tint-subtle)]">
+                <div
+                  className={`h-full w-[38%] rounded-full bg-[var(--accent)] ${offline || !polling ? "opacity-40" : "animate-pulse opacity-70"}`}
+                />
+              </div>
+            )}
+            <Ticket
+              className="pointer-events-none absolute top-1/2 right-3 h-4.5 w-4.5 -translate-y-1/2 text-[var(--text-muted)] opacity-50"
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
         <div className="mt-4 border-t border-[var(--border-subtle)] pt-3">
@@ -251,36 +241,7 @@ export function WaitingRoomPanel({
         </Card>
       )}
 
-      <Card className={`${TICKETING_CLASSES.card.summaryInfo} gap-2 px-3 py-3`}>
-        <div className="flex items-center justify-between">
-          <p className={`flex items-center gap-1.5 ${TICKETING_CLASSES.typography.sectionBodySm} text-[var(--text-muted)]`}>
-            <Megaphone className="h-3.5 w-3.5" />
-            광고
-          </p>
-          <span className="rounded-full border border-[var(--border-strong)] bg-[var(--surface-tint-subtle)] px-2 py-0.5 text-[0.68rem] font-semibold text-[var(--accent)]">
-            AD
-          </span>
-        </div>
-
-        <div className="mx-auto w-full max-w-[18rem] overflow-hidden rounded-[14px] border border-[var(--border-base)]">
-          {adLink ? (
-            <a
-              href={adLink}
-              target="_blank"
-              rel="noreferrer"
-              className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
-            >
-              <div className="aspect-[16/5] w-full bg-[var(--surface-subtle)]">
-                <img src={adImageUrl} alt={adAlt} className="h-full w-full object-cover" loading="lazy" />
-              </div>
-            </a>
-          ) : (
-            <div className="aspect-[16/5] w-full bg-[var(--surface-subtle)]">
-              <img src={adImageUrl} alt={adAlt} className="h-full w-full object-cover" loading="lazy" />
-            </div>
-          )}
-        </div>
-      </Card>
+      <TicketingAdBannerCard ad={ad} />
     </div>
   );
 }
