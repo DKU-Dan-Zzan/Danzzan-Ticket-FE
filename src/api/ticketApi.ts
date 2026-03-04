@@ -147,6 +147,9 @@ type MockQueueSession = {
 
 const mockQueueByEvent = new Map<string, MockQueueSession>();
 let mockJoinSequence = 0;
+const MOCK_QUEUE_INITIAL_REMAINING = 500;
+const MOCK_QUEUE_DECREMENT_PER_POLL = 12;
+const MOCK_QUEUE_TERMINAL_POLL_COUNT = 12;
 
 export const ticketApi = {
   getTicketingEvents: async (): Promise<TicketingEvent[]> => {
@@ -176,7 +179,7 @@ export const ticketApi = {
 
       mockJoinSequence += 1;
       const session: MockQueueSession = {
-        remaining: 18,
+        remaining: MOCK_QUEUE_INITIAL_REMAINING,
         pollCount: 0,
         terminalStatus: mockJoinSequence % 2 === 0 ? "SUCCESS" : "ADMITTED",
       };
@@ -212,9 +215,9 @@ export const ticketApi = {
       }
 
       session.pollCount += 1;
-      session.remaining = Math.max(session.remaining - 4, 0);
+      session.remaining = Math.max(session.remaining - MOCK_QUEUE_DECREMENT_PER_POLL, 0);
 
-      if (session.pollCount >= 3) {
+      if (session.pollCount >= MOCK_QUEUE_TERMINAL_POLL_COUNT) {
         mockQueueByEvent.delete(eventId);
         return { status: session.terminalStatus };
       }
